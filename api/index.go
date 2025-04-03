@@ -42,8 +42,6 @@ func Serve(){
     })
 
 
-    r.GET("/health", HealthIndicatorHandler)
-
-    ginLambda = ginadapter.New(r)
-    r.Run(":8080")    
+    r.GET("/", HealthIndicatorHandler)
+    r.Run(":8080")
 }
