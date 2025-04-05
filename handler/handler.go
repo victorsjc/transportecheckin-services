@@ -7,11 +7,11 @@ import (
 )
 
 type RequestCheckin struct {
-	id string `json:"id"`
-	date   string `json:"date"`
-	direction string `json:"direction"`
-	returnTime   string `json:"returnTime"`
-	status string `json:"status"`
+	Id string `json:"id"`
+	Date   string `json:"date"`
+	Direction string `json:"direction"`
+	ReturnTime   string `json:"returnTime"`
+	Status string `json:"status"`
 }
 
 func Health(c *gin.Context) {
