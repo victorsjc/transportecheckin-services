@@ -35,7 +35,7 @@ func RegisterCheckin(c *gin.Context) {
 func GetAllCheckins(c *gin.Context) {
  	result := []Checkin{
  		{ uuid.New().String(), "2025-04-01", "ida", "", "REGISTERED"},
- 		{ uuid.New().String(), "2025-04-01", "retorno", "17h10", "REGISTERED"}
+ 		{ uuid.New().String(), "2025-04-01", "retorno", "17h10", "REGISTERED"},
  	}
 	c.JSON(http.StatusOK, gin.H{result})
 }
