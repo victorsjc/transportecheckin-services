@@ -1,7 +1,6 @@
 package api
 
 import (
- "fmt"
  "net/http"
  "github.com/gin-gonic/gin"
  "transportecheckin/handler"
@@ -13,6 +12,7 @@ var (
 
 func registerRouter(r *gin.RouterGroup) {
     r.GET("/api/health", handler.Health)
+    r.POST("/api/register", handler.Register)
 }
 
 func Init(){
@@ -21,7 +21,6 @@ func Init(){
 
     // register route
     registerRouter(r)
-    fmt.Println("API inicializada com sucesso")
 }
 
 //entrypoint
