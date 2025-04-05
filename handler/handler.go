@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"time"
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -33,11 +34,8 @@ func RegisterCheckin(c *gin.Context) {
 }
 
 func GetAllCheckins(c *gin.Context) {
- 	result := []Checkin{
- 		{ uuid.New().String(), "2025-04-01", "ida", "", "REGISTERED"},
- 		{ uuid.New().String(), "2025-04-01", "retorno", "17h10", "REGISTERED"},
- 	}
-	c.JSON(http.StatusOK, gin.H{result})
+	checkins := generateFakeCheckins()
+    c.JSON(http.StatusOK, gin.H{"data": checkins})
 }
 
 func Login(c *gin.Context) {
@@ -50,4 +48,16 @@ func Logout(c *gin.Context) {
 
 func ErrRouter(c *gin.Context) {
 	c.String(http.StatusBadRequest, "url err")
+}
+
+// Função para criar checkins fake
+func generateFakeCheckins() []Checkin {
+    var checkins []Checkin
+    currentDate := time.Now()
+    for i := 0; i < 3; i++ { // Gera 3 dias de checkins (hoje + 2 dias atrás)
+        date := currentDate.AddDate(0, 0, -i).Format("2006-01-02")
+        checkins = append(checkins, Checkin{uuid.New().String(), date, "ida", "", "REGISTERED"})
+        checkins = append(checkins, Checkin{uuid.New().String(), date, "retorno", "17h10", "REGISTERED"})
+    }
+    return checkins
 }
