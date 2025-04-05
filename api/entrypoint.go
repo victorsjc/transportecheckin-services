@@ -19,6 +19,7 @@ func registerRouter(r *gin.RouterGroup) {
         c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
         c.AbortWithStatus(200)
     })
+    r.POST("/api/checkins", handler.Checkin)
 }
 
 func Init(){
