@@ -13,11 +13,17 @@ var (
 func registerRouter(r *gin.RouterGroup) {
     r.GET("/api/health", handler.Health)
     r.POST("/api/register", handler.Register)
+    r.OPTIONS("/api/register", func(c *gin.Context) {
+        c.Header("Access-Control-Allow-Origin", "https://ui-transportecheckin-app.vercel.app")
+        c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+        c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
+        c.AbortWithStatus(200)
+    })
 }
 
 func Init(){
     app = gin.New()
-    r := app.Group("/")
+    r := app.Group("/")    
     // Middleware para lidar com CORS manualmente
     r.Use(func(c *gin.Context) {
         c.Writer.Header().Set("Access-Control-Allow-Origin", "https://ui-transportecheckin-app.vercel.app")
