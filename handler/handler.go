@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type RequestCheckin struct {
+type Checkin struct {
 	Id string `json:"id"`
 	Date   string `json:"date"`
 	Direction string `json:"direction"`
@@ -23,7 +23,7 @@ func Register(c *gin.Context) {
 }
 
 func RegisterCheckin(c *gin.Context) {
-	var checkin RequestCheckin
+	var checkin Checkin
     if err := c.BindJSON(&checkin); err != nil {
         return
     }
@@ -33,7 +33,11 @@ func RegisterCheckin(c *gin.Context) {
 }
 
 func GetAllCheckins(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{})
+ 	result := []Checkin{
+ 		{ uuid.New().String(), "2025-04-01", "ida", "", "REGISTERED"},
+ 		{ uuid.New().String(), "2025-04-01", "retorno", "17h10", "REGISTERED"}
+ 	}
+	c.JSON(http.StatusOK, gin.H{result})
 }
 
 func Login(c *gin.Context) {
