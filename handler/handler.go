@@ -27,9 +27,8 @@ func Checkin(c *gin.Context) {
     if err := c.BindJSON(&checkin); err != nil {
         return
     }
-    checkin.id = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    checkin.status = "REGISTERED"
-	c.IndentedJSON(http.StatusCreated, checkin)
+    fmt.Println("checkin:", checkin)
+	c.IndentedJSON(http.StatusOK, checkin)
 }
 
 func ErrRouter(c *gin.Context) {
