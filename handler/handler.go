@@ -3,7 +3,6 @@ package handler
 import (
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"fmt"
 	"github.com/google/uuid"
 )
 
@@ -28,7 +27,7 @@ func RegisterCheckin(c *gin.Context) {
     if err := c.BindJSON(&checkin); err != nil {
         return
     }
-    checkin.Id = uuid.New()
+    checkin.Id = uuid.New().String()
     checkin.Status = "REGISTERED"
 	c.IndentedJSON(http.StatusOK, checkin)
 }
