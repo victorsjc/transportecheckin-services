@@ -1,6 +1,7 @@
 package api
 
 import (
+ "fmt"
  "net/http"
  "github.com/gin-gonic/gin"
  "transportecheckin/handler"
@@ -20,6 +21,7 @@ func Init(){
 
     // register route
     registerRouter(r)
+    fmt.Println("API inicializada com sucesso")
 }
 
 //entrypoint
