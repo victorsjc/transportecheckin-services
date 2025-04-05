@@ -12,7 +12,7 @@ var (
 )
 
 func registerRouter(r *gin.RouterGroup) {
-    r.GET("/api/ping", handler.Ping)
+    r.GET("/api/health", handler.Health)
 }
 
 func Init(){
