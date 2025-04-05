@@ -15,16 +15,12 @@ func registerRouter(r *gin.RouterGroup) {
     r.GET("/api/ping", handler.Ping)
 }
 
-func Init(){
-    app = gin.New()
-    r := app.Group("/")
-
-    // register route
-    registerRouter(r)
-    fmt.Println("API inicializada com sucesso")
-}
-
 //entrypoint
 func Handler(w http.ResponseWriter, r *http.Request) {
+    app = gin.New()
+    route := app.Group("/")
+
+    // register route
+    registerRouter(route)
     app.ServeHTTP(w,r)
 }
