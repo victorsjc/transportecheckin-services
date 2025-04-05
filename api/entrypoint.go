@@ -12,6 +12,20 @@ var (
 
 func registerRouter(r *gin.RouterGroup) {
     r.GET("/api/health", handler.Health)
+    r.POST("/api/login", handler.Login)
+    r.OPTIONS("/api/login", func(c *gin.Context) {
+        c.Header("Access-Control-Allow-Origin", "https://ui-transportecheckin-app.vercel.app")
+        c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+        c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
+        c.AbortWithStatus(200)
+    })
+    r.POST("/api/logout", handler.Logout)
+    r.OPTIONS("/api/logout", func(c *gin.Context) {
+        c.Header("Access-Control-Allow-Origin", "https://ui-transportecheckin-app.vercel.app")
+        c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+        c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
+        c.AbortWithStatus(200)
+    })    
     r.POST("/api/register", handler.Register)
     r.OPTIONS("/api/register", func(c *gin.Context) {
         c.Header("Access-Control-Allow-Origin", "https://ui-transportecheckin-app.vercel.app")
@@ -19,13 +33,14 @@ func registerRouter(r *gin.RouterGroup) {
         c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
         c.AbortWithStatus(200)
     })
-    r.POST("/api/checkins", handler.Checkin)
+    r.GET("/api/checkins", handler.GetAllCheckins)
+    r.POST("/api/checkins", handler.RegisterCheckin)
     r.OPTIONS("/api/checkins", func(c *gin.Context) {
         c.Header("Access-Control-Allow-Origin", "https://ui-transportecheckin-app.vercel.app")
         c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
         c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
         c.AbortWithStatus(200)
-    })    
+    })
 }
 
 func Init(){
