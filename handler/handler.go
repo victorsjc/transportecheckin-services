@@ -24,11 +24,11 @@ func Register(c *gin.Context) {
 
 func Checkin(c *gin.Context) {
 	var checkin RequestCheckin
-    if err := c.BindJSON(&ncheckin); err != nil {
+    if err := c.BindJSON(&checkin); err != nil {
         return
     }
-    //checkin.id = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    //checkin.status = "REGISTERED"
+    checkin.id = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    checkin.status = "REGISTERED"
 	c.IndentedJSON(http.StatusCreated, checkin)
 }
 
