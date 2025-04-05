@@ -4,6 +4,7 @@ import (
 	"encoding/json"	
 	"net/http"
 	"github.com/gin-gonic/gin"
+	"fmt"
 )
 
 type RequestCheckin struct {
