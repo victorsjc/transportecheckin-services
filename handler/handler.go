@@ -16,8 +16,3 @@ func Register(c *gin.Context) {
 func ErrRouter(c *gin.Context) {
 	c.String(http.StatusBadRequest, "url err")
 }
-
-func Cors(c *gin.Context) {
-	c.Header("Access-Control-Allow-Origin", "*")
-	c.Next()
-}
