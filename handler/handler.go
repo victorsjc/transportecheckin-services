@@ -38,10 +38,6 @@ func GetAllCheckins(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"data": checkins})
 }
 
-func Login(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"id":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","name": "John", "email": "johndoe@gmail.com","userType":"mensalista"})
-}
-
 func Logout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
