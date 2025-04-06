@@ -49,7 +49,7 @@ func RealizeLogin(c *gin.Context) {
         return
     }    
 	if(req.Password == "itau1234"){
-		return c.JSON(http.StatusOK)
+		return c.JSON(http.StatusOK, gin.H{})
 	}
 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 }
