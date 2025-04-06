@@ -48,8 +48,9 @@ func RealizeLogin(c *gin.Context) {
     if err := c.BindJSON(&req); err != nil {
         return
     }    
-	if(req.Password == "itau1234"){
-		return c.JSON(http.StatusOK, gin.H{})
+	if(req.Password != "" && req.Password == "itau1234"){
+		c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+		return
 	}
 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 }
