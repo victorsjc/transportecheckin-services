@@ -35,7 +35,7 @@ func RegisterCheckin(c *gin.Context) {
 
 func GetAllCheckins(c *gin.Context) {
 	checkins := generateFakeCheckins()
-    c.JSON(http.StatusOK, gin.H{"checkins": checkins})
+    c.JSON(http.StatusOK, gin.H{checkins})
 }
 
 func Logout(c *gin.Context) {
