@@ -50,10 +50,7 @@ func ErrRouter(c *gin.Context) {
 func generateFakeCheckins() []Checkin {
     var checkins []Checkin
     currentDate := time.Now()
-    for i := 0; i < 3; i++ { // Gera 3 dias de checkins (hoje + 2 dias atrás)
-        date := currentDate.AddDate(0, 0, -i).Format("2006-01-02")
-        checkins = append(checkins, Checkin{uuid.New().String(), date, "ida", "", "REGISTERED"})
-        checkins = append(checkins, Checkin{uuid.New().String(), date, "retorno", "17h10", "REGISTERED"})
-    }
+    date := currentDate.Format("2006-01-02")
+    checkins = append(checkins, Checkin{uuid.New().String(), date, "ida", "", "REGISTERED"})
     return checkins
 }
