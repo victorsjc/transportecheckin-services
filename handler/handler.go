@@ -43,7 +43,7 @@ func GetAllCheckins(c *gin.Context) {
     c.JSON(http.StatusOK, checkins)
 }
 
-func Login(c *gin.Context) {
+func RealizeLogin(c *gin.Context) {
 	var req Login
     if err := c.BindJSON(&req); err != nil {
         return
