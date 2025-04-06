@@ -48,8 +48,8 @@ func Login(c *gin.Context) {
     if err := c.BindJSON(&req); err != nil {
         return
     }    
-	if(req.Password != nil && req.Password == "itau1234"){
-		return c.JSON(http.StatusOK, gin.H{})
+	if(req.Password == "itau1234"){
+		return c.JSON(http.StatusOK)
 	}
 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 }
