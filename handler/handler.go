@@ -7,6 +7,11 @@ import (
 	"github.com/google/uuid"
 )
 
+type Login struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
+
 type Checkin struct {
 	Id string `json:"id"`
 	Date   string `json:"date"`
@@ -36,6 +41,17 @@ func RegisterCheckin(c *gin.Context) {
 func GetAllCheckins(c *gin.Context) {
 	checkins := generateFakeCheckins()
     c.JSON(http.StatusOK, checkins)
+}
+
+func Login(c *gin.Context) {
+	var req Login
+    if err := c.BindJSON(&req); err != nil {
+        return
+    }    
+	if(req.Password != nil && req.Password === "itau1234"){
+		return c.JSON(http.StatusOK, gin.H{})
+	}
+	c.JSON(http.StatusUnauthorized)
 }
 
 func Logout(c *gin.Context) {
