@@ -28,7 +28,7 @@ func registerRouter(r *gin.RouterGroup) {
     })
     r.POST("/api/register", handler.Register)
     r.OPTIONS("/api/register", func(c *gin.Context) {
-        c.Header("Access-Control-Allow-Origin", "https://ui-transportecheckin-app.vercel.app")
+        c.Header("Access-Control-Allow-Origin", "https://ui-transportecheckin-app.vercel.app, https://transportecheckin-services-victorsjc-victorsjcs-projects.vercel.app")
         c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
         c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
         c.AbortWithStatus(200)
