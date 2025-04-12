@@ -41,6 +41,14 @@ func registerRouter(r *gin.RouterGroup) {
         c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
         c.AbortWithStatus(200)
     })
+
+    /*r.POST("/api/auth/google", handler.RegisterCheckin)
+    r.OPTIONS("/api/auth/google", func(c *gin.Context) {
+        c.Header("Access-Control-Allow-Origin", "https://ui-transportecheckin-app.vercel.app")
+        c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+        c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
+        c.AbortWithStatus(200)
+    })*/
 }
 
 func Init(){
