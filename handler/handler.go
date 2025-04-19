@@ -1,14 +1,15 @@
 package handler
 
 import (
-	"context"
 	"encoding/json"
 	"time"
 	"net/http"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/square/go-jose/v3"	
+	"github.com/square/go-jose/v3"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Login struct {
@@ -44,6 +45,22 @@ type CustomClaims struct {
 	Username string `json:"username"`
 	jwt.RegisteredClaims
 }
+
+func hashAndSalt(pwd []byte) string {
+
+	// Use GenerateFromPassword to hash & salt pwd
+	// MinCost is just an integer constant provided by the bcrypt
+	// package along with DefaultCost & MaxCost.
+	// The cost can be any value you want provided it isn't lower
+	// than the MinCost (4)
+	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
+	if err != nil {
+		log.Println(err)
+	} // GenerateFromPassword returns a byte slice so we need to
+	// convert the bytes to a string and return it
+	return string(hash)
+}
+
 
 func handleRegisterNewUser(username string, password string) (string, error) {
 	hash := hashAndSalt([]byte(password))
@@ -188,7 +205,7 @@ func RealizarSocialLogin(c *gin.Context) {
 
 	var authorization_code = c.Query("code")
 
-	if authorization_code == nil {
+	if (authorization_code == "") {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 	}
 
