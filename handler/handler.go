@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/square/go-jose/v3"	
 )
