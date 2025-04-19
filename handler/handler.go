@@ -224,7 +224,9 @@ func getCookie(r *http.Request, name string) (string, error) {
 }
 
 func GetProfile(c *gin.Context) {
+	
 	token, _ := getCookie(c.Request, KN_SECURITY_HOLDER)
+  
   if token == "" {
     token := c.GetHeader(KN_AUTHORIZATION)
     if token == "" {
@@ -233,6 +235,7 @@ func GetProfile(c *gin.Context) {
       return
     }
   }
+
   claims, err := decryptJWEToken(token)
   if err != nil {
     c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido ou expirado"})
@@ -240,10 +243,7 @@ func GetProfile(c *gin.Context) {
     return
   }
 
-  c.JSON(http.StatusOK, gin.H{
-	    "username": claims.Username
-	})
-
+  c.JSON(http.StatusOK, gin.H{"username": claims.Username})
 }
 
 func RealizarSocialLogin(c *gin.Context) {
