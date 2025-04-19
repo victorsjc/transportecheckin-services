@@ -32,6 +32,8 @@ const _GOOGLE_APP_CLIENT_ID = "627127621175-td1fqlg7dfkm4bm3ljbi8q9svuoe3f4b.app
 const _GOOGLE_APP_CLIENT_SECRET = "INPTQn3uLwJxYQ2CRbhhS30w"
 const _GOOGLE_APP_AUTHORIZATION_URI = "https://ui-transportecheckin-app.vercel.app/"
 const _GOOGLE_APP_GRANT_TYPE = "authorization_code"
+const KN_SECURITY_HOLDER = "security_holder"
+const KN_AUTHORIZATION = "Authorization"
 
 // Chave para criptografia e descriptografia
 var key = []byte("E4JCVNEuWq02sErStzEM1ZvMrzbuUU12")
@@ -208,6 +210,40 @@ func RegisterCheckin(c *gin.Context) {
 func GetAllCheckins(c *gin.Context) {
 	checkins := generateFakeCheckins()
     c.JSON(http.StatusOK, checkins)
+}
+
+func getCookie(r *http.Request, name string) (string, error) {
+	// Read the cookie as normal.
+	cookie, err := r.Cookie(name)
+	if err != nil {
+		return "", err
+	}
+
+	// Return the decoded cookie value.
+	return string(cookie.Value), nil
+}
+
+func GetProfile(c *gin.Context) {
+	token, _ := getCookie(c.Request, KN_SECURITY_HOLDER)
+  if token == "" {
+    token := c.GetHeader(KN_AUTHORIZATION)
+    if token == "" {
+      c.JSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido"})
+      c.Abort()
+      return
+    }
+  }
+  claims, err := decryptJWEToken(token)
+  if err != nil {
+    c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido ou expirado"})
+    c.Abort()
+    return
+  }
+
+  c.JSON(http.StatusOK, gin.H{
+	    "username": claims.Username
+	})
+
 }
 
 func RealizarSocialLogin(c *gin.Context) {
