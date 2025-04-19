@@ -49,6 +49,12 @@ type CustomClaims struct {
 	jwt.RegisteredClaims
 }
 
+var userInfo struct {
+	Id string `json:"id"`
+	Email string `json:"email"`
+	Name string `json:"name"`
+}
+
 func hashAndSalt(pwd []byte) string {
 
 	// Use GenerateFromPassword to hash & salt pwd
@@ -210,6 +216,7 @@ func RealizarSocialLogin(c *gin.Context) {
 
 	if (authorization_code == "") {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
 	}
 
   // Monta os campos da requisição diretamente na função
@@ -254,39 +261,54 @@ func RealizarSocialLogin(c *gin.Context) {
 	if err := json.Unmarshal(body, &tokenResponse); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar o JSON de resposta"})
     return
+
+  } else {
+		// Retorna apenas o access_token para o cliente
+	  url := "https://www.googleapis.com/oauth2/v1/userinfo?alt=json"
+	  req, err := http.NewRequest("GET", url)
+	  if err != nil {
+		  c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar a requisição"})
+	    return
+	  }
+	  req.Header.Set("Content-Type", "application/json")
+	  req.Header.Add("Authorization", "Bearer" + tokenResponse.AccessToken)
+
+	  client := &http.Client{}
+	  resp, err := client.Do(req)
+	  if err != nil {
+	    c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao enviar a requisição"})
+	    return
+	  }
+		defer resp.Body.Close()
+
+	  // Lê a resposta
+	  body, err := ioutil.ReadAll(resp.Body)
+	  if err != nil {
+	    c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao ler a resposta"})
+	  	return
+		}
+
+		if err := json.Unmarshal(body, &userInfo); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar o JSON de resposta"})
+	    return
+	  }
+
+		token, err := createJWEToken(userInfo.Email)
+		if err != nil {
+			fmt.Print(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao criar token"})
+			return
+		}
+		setCookieHandler(c.Writer, c.Request, "security_holder", token, "localhost")
+		c.JSON(http.StatusOK, gin.H{"access_token": token, "refresh_token": token, "expire_in": tokenResponse.ExpiresIn})
+		return
+
+	  /*c.JSON(http.StatusOK, gin.H{
+	     "access_token": tokenResponse.AccessToken,
+	     "expires_in":   tokenResponse.ExpiresIn,
+	     "token_type":   tokenResponse.TokenType,
+	  })*/
   }
-
-	// Retorna apenas o access_token para o cliente
-  c.JSON(http.StatusOK, gin.H{
-     "access_token": tokenResponse.AccessToken,
-     "expires_in":   tokenResponse.ExpiresIn,
-     "token_type":   tokenResponse.TokenType,
-  })
-	//obtem o client_id, client_secret
-	      // Aqui você pode enviar o response.code para o servidor
-      // Corpo da requisição
-          /*const bodyData = new URLSearchParams();
-          bodyData.append("client_id", "627127621175-td1fqlg7dfkm4bm3ljbi8q9svuoe3f4b.apps.googleusercontent.com");
-          bodyData.append("client_secret", "INPTQn3uLwJxYQ2CRbhhS30w");
-          bodyData.append("code", response.code);
-          bodyData.append("redirect_uri", "postmessage");
-          bodyData.append("grant_type", "authorization_code");
-
-            // Realizando a requisição POST
-            const result = await fetch("https://oauth2.googleapis.com/token", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-              },
-              body: bodyData.toString(),
-            });
-
-            if (result.ok) {
-              const data = await result.json();
-              console.log("Tokens Recebidos:", data);
-            } else {
-              console.error("Erro na troca de código:", result.status, await result.text());
-            }*/
 }
 
 func RealizeLogin(c *gin.Context) {
