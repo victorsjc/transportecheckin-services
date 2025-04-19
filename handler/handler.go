@@ -2,9 +2,12 @@ package handler
 
 import (
 	"encoding/json"
+	"bytes"
 	"time"
 	"net/http"
 	"fmt"
+	"log"
+	"io/ioutil"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/golang-jwt/jwt/v5"
@@ -232,6 +235,21 @@ func RealizarSocialLogin(c *gin.Context) {
     return
   }
   req.Header.Set("Content-Type", "application/json")
+
+  client := &http.Client{}
+  resp, err := client.Do(req)
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao enviar a requisição"})
+    return
+  }
+	defer resp.Body.Close()
+
+  // Lê a resposta
+  body, err := ioutil.ReadAll(resp.Body)
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao ler a resposta"})
+  	return
+	}	
 
 	if err := json.Unmarshal(body, &tokenResponse); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar o JSON de resposta"})
