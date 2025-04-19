@@ -265,7 +265,7 @@ func RealizarSocialLogin(c *gin.Context) {
   } else {
 		// Retorna apenas o access_token para o cliente
 	  url := "https://www.googleapis.com/oauth2/v1/userinfo?alt=json"
-	  req, err := http.NewRequest("GET", url)
+	  req, err := http.NewRequest("GET", url, nil)
 	  if err != nil {
 		  c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar a requisição"})
 	    return
