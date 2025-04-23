@@ -252,6 +252,7 @@ func RealizarSocialLogin(c *gin.Context) {
 
 	if (authorization_code == "") {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		c.Abort()
 		return
 	}
 
@@ -268,6 +269,7 @@ func RealizarSocialLogin(c *gin.Context) {
   jsonData, err := json.Marshal(data)
   if err != nil {
  	 c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao converter os dados para JSON"})
+ 	 c.Abort()
    return
   }
 
@@ -275,6 +277,7 @@ func RealizarSocialLogin(c *gin.Context) {
   req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
   if err != nil {
 	  c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar a requisição"})
+	  c.Abort()
     return
   }
   req.Header.Set("Content-Type", "application/json")
@@ -283,6 +286,7 @@ func RealizarSocialLogin(c *gin.Context) {
   resp, err := client.Do(req)
   if err != nil {
     c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao enviar a requisição"})
+    c.Abort()
     return
   }
 	defer resp.Body.Close()
@@ -291,11 +295,13 @@ func RealizarSocialLogin(c *gin.Context) {
   body, err := ioutil.ReadAll(resp.Body)
   if err != nil {
     c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao ler a resposta"})
+    c.Abort()
   	return
 	}	
 
 	if err := json.Unmarshal(body, &tokenResponse); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar o JSON de resposta"})
+		c.Abort()
     return
 
   } else {
@@ -304,6 +310,7 @@ func RealizarSocialLogin(c *gin.Context) {
 	  req, err := http.NewRequest("POST", url, nil)
 	  if err != nil {
 		  c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar a requisição"})
+		  c.Abort()
 	    return
 	  }
 	  req.Header.Set("Content-Type", "application/json")
@@ -313,6 +320,7 @@ func RealizarSocialLogin(c *gin.Context) {
 	  resp, err := client.Do(req)
 	  if err != nil {
 	    c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao enviar a requisição"})
+	    c.Abort()
 	    return
 	  }
 		defer resp.Body.Close()
