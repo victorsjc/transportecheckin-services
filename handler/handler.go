@@ -335,7 +335,7 @@ func RealizarSocialLogin(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao criar token"})
 			return
 		}
-		setCookieHandler(c.Writer, c.Request, "security_holder", tokenResponse, "localhost")
+		setCookieHandler(c.Writer, c.Request, "security_holder", tokenResponse.AccessToken, "localhost")
 		
 		decrypted_token, err := decryptJWEToken(token)
 		if err != nil {
