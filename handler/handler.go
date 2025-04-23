@@ -300,14 +300,14 @@ func RealizarSocialLogin(c *gin.Context) {
 
   } else {
 		// Retorna apenas o access_token para o cliente
-	  url := "https://www.googleapis.com/oauth2/v1/userinfo?alt=json"
-	  req, err := http.NewRequest("GET", url, nil)
+	  url := "https://www.googleapis.com/oauth2/v3/userinfo"
+	  req, err := http.NewRequest("POST", url, nil)
 	  if err != nil {
 		  c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar a requisição"})
 	    return
 	  }
 	  req.Header.Set("Content-Type", "application/json")
-	  req.Header.Add("Authorization", "Bearer" + tokenResponse.AccessToken)
+	  req.Header.Set("Authorization", "Bearer" + tokenResponse.AccessToken)
 
 	  client := &http.Client{}
 	  resp, err := client.Do(req)
@@ -335,7 +335,7 @@ func RealizarSocialLogin(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao criar token"})
 			return
 		}
-		setCookieHandler(c.Writer, c.Request, "security_holder", token, "localhost")
+		setCookieHandler(c.Writer, c.Request, "security_holder", tokenResponse, "localhost")
 		
 		decrypted_token, err := decryptJWEToken(token)
 		if err != nil {
