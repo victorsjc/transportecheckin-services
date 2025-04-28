@@ -321,7 +321,7 @@ func RealizarSocialLogin(c *gin.Context) {
     return
   }
 
-  	c.JSON(http.StatusOK, gin.H{"req": tokenResponse, "body": resp.Body})
+  	c.JSON(http.StatusOK, gin.H{"req": tokenResponse, "body": req})
 
   /*} else {
 		// Retorna apenas o access_token para o cliente
