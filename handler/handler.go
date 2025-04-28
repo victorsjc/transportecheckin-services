@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"fmt"
 	"log"
-	//"io/ioutil"
+	"io/ioutil"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/golang-jwt/jwt/v5"
@@ -27,12 +27,6 @@ type Checkin struct {
 	ReturnTime   string `json:"returnTime"`
 	Status string `json:"status"`
 }
-
-            "client_id":     _GOOGLE_APP_CLIENT_ID,
-            "client_secret": _GOOGLE_APP_CLIENT_SECRET,
-            "code":          authorization_code,
-            "redirect_uri":  _GOOGLE_APP_AUTHORIZATION_URI,
-            "grant_type":    _GOOGLE_APP_GRANT_TYPE,
 
 type AuthorizationCodeFlowReq struct {
     ClientId  string `json:"client_id"`
