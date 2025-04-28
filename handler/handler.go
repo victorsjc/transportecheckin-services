@@ -300,7 +300,7 @@ func RealizarSocialLogin(c *gin.Context) {
   	return
 	}	
 
-	c.JSON(http.StatusOK, gin.H{"body": body})
+	c.JSON(http.StatusOK, gin.H{"body": resp.Body})
 
 	/*if err := json.Unmarshal(body, &tokenResponse); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar o JSON de resposta"})
