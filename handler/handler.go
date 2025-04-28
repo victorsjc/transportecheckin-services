@@ -280,6 +280,7 @@ func RealizarSocialLogin(c *gin.Context) {
 	  c.Abort()
     return
   }
+
   req.Header.Set("Content-Type", "application/json")
 
   client := &http.Client{}
@@ -299,7 +300,9 @@ func RealizarSocialLogin(c *gin.Context) {
   	return
 	}	
 
-	if err := json.Unmarshal(body, &tokenResponse); err != nil {
+	c.JSON(http.StatusOK, gin.H{"body": body})
+
+	/*if err := json.Unmarshal(body, &tokenResponse); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar o JSON de resposta"})
 		c.Abort()
     return
@@ -329,11 +332,13 @@ func RealizarSocialLogin(c *gin.Context) {
 	  body, err := ioutil.ReadAll(resp.Body)
 	  if err != nil {
 	    c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao ler a resposta"})
+	    c.Abort()
 	  	return
 		}
 
 		if err := json.Unmarshal(body, &userInfo); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar o JSON de resposta"})
+			c.Abort()
 	    return
 	  }
 
@@ -351,15 +356,9 @@ func RealizarSocialLogin(c *gin.Context) {
 			return			
 		}
 
-		c.JSON(http.StatusOK, gin.H{"access_token": token, "refresh_token": decrypted_token, "expire_in": tokenResponse.ExpiresIn})
+		c.JSON(http.StatusOK, gin.H{"access_token": token, "refresh_token": userInfo, "expire_in": tokenResponse.ExpiresIn})
 		return
-
-	  /*c.JSON(http.StatusOK, gin.H{
-	     "access_token": tokenResponse.AccessToken,
-	     "expires_in":   tokenResponse.ExpiresIn,
-	     "token_type":   tokenResponse.TokenType,
-	  })*/
-  }
+  }*/
 }
 
 func RealizeLogin(c *gin.Context) {
