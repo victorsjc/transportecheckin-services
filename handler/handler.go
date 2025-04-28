@@ -289,22 +289,22 @@ func RealizarSocialLogin(c *gin.Context) {
   }
 
   url := "https://oauth2.googleapis.com/token"
-  req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+  resp, err := http.Post(url, "application/json" bytes.NewBuffer(jsonData))
   if err != nil {
 	  c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar a requisição"})
 	  c.Abort()
     return
   }
 
-  req.Header.Set("Content-Type", "application/json")
+  //req.Header.Set("Content-Type", "application/json")
 
-  client := &http.Client{}
+  /*client := &http.Client{}
   resp, err := client.Do(req)
   if err != nil {
     c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao enviar a requisição"})
     c.Abort()
     return
-  }
+  }*/
 	defer resp.Body.Close()
 
   // Lê a resposta
@@ -321,7 +321,7 @@ func RealizarSocialLogin(c *gin.Context) {
     return
   }
 
-	c.JSON(http.StatusOK, gin.H{"req": tokenResponse, "body": resp.Body})
+	c.JSON(http.StatusOK, gin.H{"req": tokenResponse, "body": body})
 
   /*} else {
 		// Retorna apenas o access_token para o cliente
