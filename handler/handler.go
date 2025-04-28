@@ -28,6 +28,20 @@ type Checkin struct {
 	Status string `json:"status"`
 }
 
+            "client_id":     _GOOGLE_APP_CLIENT_ID,
+            "client_secret": _GOOGLE_APP_CLIENT_SECRET,
+            "code":          authorization_code,
+            "redirect_uri":  _GOOGLE_APP_AUTHORIZATION_URI,
+            "grant_type":    _GOOGLE_APP_GRANT_TYPE,
+
+type AuthorizationCodeFlowReq struct {
+    ClientId  string `json:"client_id"`
+    ClientSecret string `json:"client_secret"`
+    Code string `json:"code"`
+    RedirectUri string `json:"redirect_uri"`
+    GrantType string `json:"grant_type"`
+}
+
 const _GOOGLE_APP_CLIENT_ID = "627127621175-td1fqlg7dfkm4bm3ljbi8q9svuoe3f4b.apps.googleusercontent.com"
 const _GOOGLE_APP_CLIENT_SECRET = "INPTQn3uLwJxYQ2CRbhhS30w"
 const _GOOGLE_APP_AUTHORIZATION_URI = "https://ui-transportecheckin-app.vercel.app/"
@@ -256,14 +270,21 @@ func RealizarSocialLogin(c *gin.Context) {
 		return
 	}
 
+  data := AuthorizationCodeFlowReq{
+            ClientId:     _GOOGLE_APP_CLIENT_ID,
+            ClientSecret: _GOOGLE_APP_CLIENT_SECRET,
+            Code:          authorization_code,
+            RedirectUri:  _GOOGLE_APP_AUTHORIZATION_URI,
+            GrantType:    _GOOGLE_APP_GRANT_TYPE,
+  }
   // Monta os campos da requisição diretamente na função
-  data := map[string]string{
+  /*data := map[string]string{
             "client_id":     _GOOGLE_APP_CLIENT_ID,
             "client_secret": _GOOGLE_APP_CLIENT_SECRET,
             "code":          authorization_code,
             "redirect_uri":  _GOOGLE_APP_AUTHORIZATION_URI,
             "grant_type":    _GOOGLE_APP_GRANT_TYPE,
-        }
+        }*/
 
   // Serializa os dados em JSON
   jsonData, err := json.Marshal(data)
@@ -293,21 +314,22 @@ func RealizarSocialLogin(c *gin.Context) {
 	defer resp.Body.Close()
 
   // Lê a resposta
-  /*body, err := ioutil.ReadAll(resp.Body)
+  body, err := ioutil.ReadAll(resp.Body)
   if err != nil {
     c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao ler a resposta"})
     c.Abort()
   	return
-	}*/
+	}
 
-	c.JSON(http.StatusOK, gin.H{"req": jsonData, "body": resp.Body})
-
-	/*if err := json.Unmarshal(body, &tokenResponse); err != nil {
+	if err := json.Unmarshal(body, &tokenResponse); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar o JSON de resposta"})
 		c.Abort()
     return
+  }
 
-  } else {
+  	c.JSON(http.StatusOK, gin.H{"req": tokenResponse, "body": resp.Body})
+
+  /*} else {
 		// Retorna apenas o access_token para o cliente
 	  url := "https://www.googleapis.com/oauth2/v3/userinfo"
 	  req, err := http.NewRequest("POST", url, nil)
