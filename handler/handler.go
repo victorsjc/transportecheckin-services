@@ -264,21 +264,21 @@ func RealizarSocialLogin(c *gin.Context) {
 		return
 	}
 
-  data := AuthorizationCodeFlowReq{
+  /*data := AuthorizationCodeFlowReq{
             ClientId:     _GOOGLE_APP_CLIENT_ID,
             ClientSecret: _GOOGLE_APP_CLIENT_SECRET,
             Code:          authorization_code,
             RedirectUri:  _GOOGLE_APP_AUTHORIZATION_URI,
             GrantType:    _GOOGLE_APP_GRANT_TYPE,
-  }
+  }*/
   // Monta os campos da requisição diretamente na função
-  /*data := map[string]string{
+  data := map[string]string{
             "client_id":     _GOOGLE_APP_CLIENT_ID,
             "client_secret": _GOOGLE_APP_CLIENT_SECRET,
             "code":          authorization_code,
             "redirect_uri":  _GOOGLE_APP_AUTHORIZATION_URI,
             "grant_type":    _GOOGLE_APP_GRANT_TYPE,
-        }*/
+        }
 
   // Serializa os dados em JSON
   jsonData, err := json.Marshal(data)
