@@ -293,14 +293,14 @@ func RealizarSocialLogin(c *gin.Context) {
 	defer resp.Body.Close()
 
   // Lê a resposta
-  body, err := ioutil.ReadAll(resp.Body)
+  /*body, err := ioutil.ReadAll(resp.Body)
   if err != nil {
     c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao ler a resposta"})
     c.Abort()
   	return
-	}	
+	}*/
 
-	c.JSON(http.StatusOK, gin.H{"body": resp.Body})
+	c.JSON(http.StatusOK, gin.H{"req": jsonData, "body": resp.Body})
 
 	/*if err := json.Unmarshal(body, &tokenResponse); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar o JSON de resposta"})
