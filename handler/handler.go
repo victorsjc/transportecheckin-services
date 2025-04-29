@@ -8,12 +8,13 @@ import (
 	"net/url"
 	"fmt"
 	"log"
-	//"io/ioutil"
+	"io/ioutil"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/square/go-jose/v3"
 	"golang.org/x/crypto/bcrypt"
+	"strings"
 )
 
 type Login struct {
