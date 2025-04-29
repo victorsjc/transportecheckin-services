@@ -2,9 +2,10 @@ package handler
 
 import (
 	"encoding/json"
-	"bytes"
+	//"bytes"
 	"time"
 	"net/http"
+	"net/url"
 	"fmt"
 	"log"
 	//"io/ioutil"
@@ -264,25 +265,31 @@ func GetProfile(c *gin.Context) {
 
 // Função para trocar o código pelo token
 func exchangeCodeForToken(code string) (map[string]interface{}, error) {
-    data := map[string]string{
+    /*data := map[string]string{
         "code":          code,
         "client_id":     clientID,
         "client_secret": clientSecret,
         "redirect_uri":  redirectURI,
         "grant_type":    "authorization_code",
-    }
+    }*/
+    // Cria os dados do formulário
+    data := url.Values{}
+    data.Set("code", code)
+    data.Set("client_id", clientID)
+    data.Set("client_secret", clientSecret)
+    data.Set("redirect_uri", redirectURI)
+    data.Set("grant_type", "authorization_code")
 
-    jsonData, _ := json.Marshal(data)
-    req, err := http.NewRequest("POST", tokenURL, bytes.NewBuffer(jsonData))
-    if err != nil {
-    	return nil, err
-    }
-    req.Header.Set("Content-Type", "application/json")
-    req.Body = http.NoBody
+    // Cria a requisição POST
+    req, err := http.NewRequest("POST", tokenURL, strings.NewReader(data.Encode()))
     if err != nil {
         return nil, err
     }
 
+    // Define os cabeçalhos adequados
+    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+    // Executa a requisição
     client := &http.Client{}
     resp, err := client.Do(req)
     if err != nil {
@@ -290,13 +297,18 @@ func exchangeCodeForToken(code string) (map[string]interface{}, error) {
     }
     defer resp.Body.Close()
 
-    fmt.Println(resp)
-
-    var res map[string]interface{}
-    if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
+    // Lê a resposta
+    body, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
         return nil, err
     }
-    return res, nil
+
+		err := json.Unmarshal(body, &tokenResponse);
+		if err != nil {
+	    return nil, err
+	  }
+
+	  return tokenResponse, nil
 }
 
 func RealizarSocialLogin(c *gin.Context) {
