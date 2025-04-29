@@ -304,8 +304,7 @@ func exchangeCodeForToken(code string) (map[string]interface{}, error) {
         return nil, err
     }
 
-		err := json.Unmarshal(body, &tokenResponse);
-		if err != nil {
+		if err := json.Unmarshal(body, &tokenResponse); err != nil {
 	    return nil, err
 	  }
 
