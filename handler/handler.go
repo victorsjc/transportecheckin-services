@@ -304,11 +304,7 @@ func exchangeCodeForToken(code string) (map[string]interface{}, error) {
         return nil, err
     }
 
-		if err := json.Unmarshal(body, &tokenResponse); err != nil {
-	    return nil, err
-	  }
-
-	  return tokenResponse, nil
+	  return body, nil
 }
 
 func RealizarSocialLogin(c *gin.Context) {
