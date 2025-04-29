@@ -285,7 +285,7 @@ func exchangeCodeForToken(code string) (TokenResponse, error) {
     // Cria a requisição POST
     req, err := http.NewRequest("POST", tokenURL, strings.NewReader(data.Encode()))
     if err != nil {
-        return nil, err
+        return token, err
     }
 
     // Define os cabeçalhos adequados
@@ -295,18 +295,18 @@ func exchangeCodeForToken(code string) (TokenResponse, error) {
     client := &http.Client{}
     resp, err := client.Do(req)
     if err != nil {
-        return nil, err
+        return token, err
     }
     defer resp.Body.Close()
 
     // Lê a resposta
     body, err := ioutil.ReadAll(resp.Body)
     if err != nil {
-        return nil, err
+        return token, err
     }
 
 		if err := json.Unmarshal(body, &token); err != nil {
-	    return nil, err
+	    return token, err
 	  }    
 
 	  return token, nil
