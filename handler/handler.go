@@ -46,6 +46,14 @@ const KN_AUTHORIZATION = "Authorization"
 // Chave para criptografia e descriptografia
 var key = []byte("E4JCVNEuWq02sErStzEM1ZvMrzbuUU12")
 
+var (
+    clientID     = "627127621175-td1fqlg7dfkm4bm3ljbi8q9svuoe3f4b.apps.googleusercontent.com"
+    clientSecret = "INPTQn3uLwJxYQ2CRbhhS30w"
+    redirectURI  = "https://ui-transportecheckin-app.vercel.app/"
+    authURL      = "https://accounts.google.com/o/oauth2/auth"
+    tokenURL     = "https://oauth2.googleapis.com/token"
+)
+
 // Decodifica a resposta em uma estrutura Go
 var tokenResponse struct {
     AccessToken string `json:"access_token"`
@@ -254,13 +262,44 @@ func GetProfile(c *gin.Context) {
   c.JSON(http.StatusOK, gin.H{"username": claims.Username})
 }
 
+// Função para trocar o código pelo token
+func exchangeCodeForToken(code string) (map[string]interface{}, error) {
+    data := map[string]string{
+        "code":          code,
+        "client_id":     clientID,
+        "client_secret": clientSecret,
+        "redirect_uri":  redirectURI,
+        "grant_type":    "authorization_code",
+    }
+
+    jsonData, _ := json.Marshal(data)
+    req, err := http.NewRequest("POST", tokenURL, nil)
+    req.Header.Set("Content-Type", "application/json")
+    req.Body = http.NoBody
+    if err != nil {
+        return nil, err
+    }
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        return nil, err
+    }
+    defer resp.Body.Close()
+
+    var res map[string]interface{}
+    if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
+        return nil, err
+    }
+    return res, nil
+}
+
 func RealizarSocialLogin(c *gin.Context) {
 
 	var authorization_code = c.Query("code")
 
 	if (authorization_code == "") {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		c.Abort()
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})		
 		return
 	}
 
@@ -271,57 +310,14 @@ func RealizarSocialLogin(c *gin.Context) {
             RedirectUri:  _GOOGLE_APP_AUTHORIZATION_URI,
             GrantType:    _GOOGLE_APP_GRANT_TYPE,
   }*/
-  // Monta os campos da requisição diretamente na função
-  data := map[string]string{
-            "client_id":     _GOOGLE_APP_CLIENT_ID,
-            "client_secret": _GOOGLE_APP_CLIENT_SECRET,
-            "code":          authorization_code,
-            "redirect_uri":  _GOOGLE_APP_AUTHORIZATION_URI,
-            "grant_type":    _GOOGLE_APP_GRANT_TYPE,
-        }
 
-  // Serializa os dados em JSON
-  jsonData, err := json.Marshal(data)
+	token, err := exchangeCodeForToken(authorization_code)
   if err != nil {
- 	 c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao converter os dados para JSON"})
- 	 c.Abort()
-   return
-  }
-
-  url := "https://oauth2.googleapis.com/token"
-  resp, err := http.Post(url, "application/json" bytes.NewBuffer(jsonData))
-  if err != nil {
-	  c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar a requisição"})
-	  c.Abort()
+    log.Println("Erro ao obter token:", err)
+    c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha na autenticação"})
     return
   }
-
-  //req.Header.Set("Content-Type", "application/json")
-
-  /*client := &http.Client{}
-  resp, err := client.Do(req)
-  if err != nil {
-    c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao enviar a requisição"})
-    c.Abort()
-    return
-  }*/
-	defer resp.Body.Close()
-
-  // Lê a resposta
-  body, err := ioutil.ReadAll(resp.Body)
-  if err != nil {
-    c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao ler a resposta"})
-    c.Abort()
-  	return
-	}
-
-	if err := json.Unmarshal(body, &tokenResponse); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar o JSON de resposta"})
-		c.Abort()
-    return
-  }
-
-	c.JSON(http.StatusOK, gin.H{"req": tokenResponse, "body": body})
+	c.JSON(http.StatusOK, gin.H{"token": token})
 
   /*} else {
 		// Retorna apenas o access_token para o cliente
