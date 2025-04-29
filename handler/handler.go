@@ -290,6 +290,8 @@ func exchangeCodeForToken(code string) (map[string]interface{}, error) {
     }
     defer resp.Body.Close()
 
+    fmt.Println(resp)
+
     var res map[string]interface{}
     if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
         return nil, err
