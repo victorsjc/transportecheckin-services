@@ -265,7 +265,7 @@ func GetProfile(c *gin.Context) {
 }
 
 // Função para trocar o código pelo token
-func exchangeCodeForToken(code string) (map[string]interface{}, error) {
+func exchangeCodeForToken(code string) (*tokenResponse, error) {
     /*data := map[string]string{
         "code":          code,
         "client_id":     clientID,
@@ -304,7 +304,11 @@ func exchangeCodeForToken(code string) (map[string]interface{}, error) {
         return nil, err
     }
 
-	  return body, nil
+		if err := json.Unmarshal(body, &tokenResponse); err != nil {
+	    return nil, err
+	  }    
+
+	  return tokenResponse, nil
 }
 
 func RealizarSocialLogin(c *gin.Context) {
