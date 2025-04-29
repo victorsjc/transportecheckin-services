@@ -57,7 +57,7 @@ var (
 )
 
 // Decodifica a resposta em uma estrutura Go
-var tokenResponse struct {
+type TokenResponse struct {
     AccessToken string `json:"access_token"`
     ExpiresIn   int    `json:"expires_in"`
     TokenType   string `json:"token_type"`
@@ -265,7 +265,8 @@ func GetProfile(c *gin.Context) {
 }
 
 // Função para trocar o código pelo token
-func exchangeCodeForToken(code string) (*tokenResponse, error) {
+func exchangeCodeForToken(code string) (*TokenResponse, error) {
+	  var token TokenResponse
     /*data := map[string]string{
         "code":          code,
         "client_id":     clientID,
@@ -304,11 +305,11 @@ func exchangeCodeForToken(code string) (*tokenResponse, error) {
         return nil, err
     }
 
-		if err := json.Unmarshal(body, &tokenResponse); err != nil {
+		if err := json.Unmarshal(body, &token); err != nil {
 	    return nil, err
 	  }    
 
-	  return tokenResponse, nil
+	  return token, nil
 }
 
 func RealizarSocialLogin(c *gin.Context) {
