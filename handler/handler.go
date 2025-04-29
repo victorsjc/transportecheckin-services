@@ -265,7 +265,7 @@ func GetProfile(c *gin.Context) {
 }
 
 // Função para trocar o código pelo token
-func exchangeCodeForToken(code string) (*TokenResponse, error) {
+func exchangeCodeForToken(code string) (TokenResponse, error) {
 	  var token TokenResponse
     /*data := map[string]string{
         "code":          code,
