@@ -2,12 +2,12 @@ package handler
 
 import (
 	"encoding/json"
-	"bytes"
+	//"bytes"
 	"time"
 	"net/http"
 	"fmt"
 	"log"
-	"io/ioutil"
+	//"io/ioutil"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/golang-jwt/jwt/v5"
@@ -273,7 +273,10 @@ func exchangeCodeForToken(code string) (map[string]interface{}, error) {
     }
 
     jsonData, _ := json.Marshal(data)
-    req, err := http.NewRequest("POST", tokenURL, nil)
+    req, err := http.NewRequest("POST", tokenURL, bytes.NewBuffer(jsonData))
+    if err != nil {
+    	return nil, err
+    }
     req.Header.Set("Content-Type", "application/json")
     req.Body = http.NoBody
     if err != nil {
