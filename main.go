@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import "net/http"
+import "transportecheckin/api"
 
 func main() {
-    fmt.Println("Hello, world.")
+    http.HandleFunc("/", api.Handler)
+    http.ListenAndServe(":5000", nil)
 }

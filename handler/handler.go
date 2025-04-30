@@ -280,7 +280,7 @@ func exchangeCodeForToken(code string) (TokenResponse, error) {
     data.Set("client_id", clientID)
     data.Set("client_secret", clientSecret)
     data.Set("redirect_uri", redirectURI)
-    data.Set("grant_type", "authorization_code")
+    data.Set("grant_type", "authorization_code")    
 
     // Cria a requisição POST
     req, err := http.NewRequest("POST", tokenURL, strings.NewReader(data.Encode()))
@@ -303,13 +303,13 @@ func exchangeCodeForToken(code string) (TokenResponse, error) {
     body, err := ioutil.ReadAll(resp.Body)
     if err != nil {
         return token, err
-    }
+    }    
 
-		if err := json.Unmarshal(body, &token); err != nil {
-	    return token, err
-	  }    
+	if err := json.Unmarshal(body, &token); err != nil {
+	 return token, err
+	}    
 
-	  return token, nil
+	return token, nil
 }
 
 func RealizarSocialLogin(c *gin.Context) {
