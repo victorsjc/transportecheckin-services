@@ -276,7 +276,7 @@ func exchangeCodeForToken(code string) (TokenResponse, error) {
     }*/
     // Cria os dados do formulário
     data := url.Values{}
-    data.Set("code", code)
+    data.Set("code", "4/0Ab_5qlm5KRYlbqOMC3-Op1T2D6TwMmPb5cLlNZr9Ufp5jD_Z0X9Q68a-m4JSYA9Ru6kKQw")
     data.Set("client_id", clientID)
     data.Set("client_secret", clientSecret)
     data.Set("redirect_uri", redirectURI)
