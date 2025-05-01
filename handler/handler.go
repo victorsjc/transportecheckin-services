@@ -299,14 +299,14 @@ func exchangeCodeForToken(code string) (TokenResponse, error) {
     // Lê a resposta
     body, err := ioutil.ReadAll(resp.Body)
     if err != nil {
-        return token, err
-    }    
-
-	if err := json.Unmarshal(body, &token); err != nil {
-	 return token, err
-	}    
-
-	return token, nil
+     	return token, err
+    } else {
+    	if err := json.Unmarshal(body, &token); err != nil {
+	 		return token, err
+		}else{
+			return token, nil
+		}		
+	}
 }
 
 func RealizarSocialLogin(c *gin.Context) {
@@ -319,11 +319,12 @@ func RealizarSocialLogin(c *gin.Context) {
 	}
 
 	token, err := exchangeCodeForToken(authorization_code)
-	if err != nil {
-	  log.Println("Erro ao obter token:", err)
+	if (err != nil) {
+	  fmt.Println("Erro ao obter token:", err)
 	  c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha na autenticação"})
+	  c.Abort()
 	  return
-	} else {
+	}else{
 		// Retorna apenas o access_token para o cliente
 	  url := "https://www.googleapis.com/oauth2/v3/userinfo"
 	  req, err := http.NewRequest("POST", url, nil)
@@ -346,6 +347,12 @@ func RealizarSocialLogin(c *gin.Context) {
 	  defer resp.Body.Close()
 
 	  // Lê a resposta
+	  if resp.StatusCode == http.StatusUnauthorized {
+	    c.JSON(http.StatusUnauthorized, gin.H{"error": "Falha na autenticação"})
+	    c.Abort()
+	  	return
+	  }
+
 	  body, err := ioutil.ReadAll(resp.Body)
 	  if err != nil {
 	    c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao ler a resposta"})
@@ -370,8 +377,8 @@ func RealizarSocialLogin(c *gin.Context) {
 		return
 	   }
 
-	   setCookieHandler(c.Writer, c.Request, "security_holder", token, "localhost")		
-  }
+	   setCookieHandler(c.Writer, c.Request, "security_holder", token, "localhost")
+	}
 }
 
 func RealizeLogin(c *gin.Context) {
