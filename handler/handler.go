@@ -140,10 +140,12 @@ func createJWEToken(username string) (string, error) {
 
 // Função para descriptografar e verificar o token JWE
 func decryptJWEToken(jweToken string) (*CustomClaims, error) {
+	fmt.Println(jweToken)
 	object, err := jose.ParseEncrypted(jweToken)
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(object)
 	decrypted, err := object.Decrypt(key)
 	if err != nil {
 		return nil, err
@@ -242,11 +244,13 @@ func getCookie(r *http.Request, name string) (string, error) {
 }
 
 func GetProfile(c *gin.Context) {
+
+  var token string
 	
-	token, _ := getCookie(c.Request, KN_SECURITY_HOLDER)
-  
-  if token == "" {
-    token := c.GetHeader(KN_AUTHORIZATION)
+  token, err := getCookie(c.Request, KN_SECURITY_HOLDER)
+
+  if err != nil {
+    token = c.GetHeader(KN_AUTHORIZATION)
     if token == "" {
       c.JSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido"})
       c.Abort()
@@ -256,25 +260,17 @@ func GetProfile(c *gin.Context) {
 
   claims, err := decryptJWEToken(token)
   if err != nil {
-    c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido ou expirado"})
-    c.Abort()
-    return
+  	fmt.Println(err)
+  	c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido ou expirado"})
+  	c.Abort()
+  	return
   }
-
   c.JSON(http.StatusOK, gin.H{"username": claims.Username})
 }
 
 // Função para trocar o código pelo token
 func exchangeCodeForToken(code string) (TokenResponse, error) {
-	  var token TokenResponse
-    /*data := map[string]string{
-        "code":          code,
-        "client_id":     clientID,
-        "client_secret": clientSecret,
-        "redirect_uri":  redirectURI,
-        "grant_type":    "authorization_code",
-    }*/
-    // Cria os dados do formulário
+    var token TokenResponse
     data := url.Values{}
     data.Set("code", code)
     data.Set("client_id", clientID)
@@ -305,7 +301,6 @@ func exchangeCodeForToken(code string) (TokenResponse, error) {
     if err != nil {
         return token, err
     }    
-	fmt.Println(string(body))
 
 	if err := json.Unmarshal(body, &token); err != nil {
 	 return token, err
@@ -323,23 +318,12 @@ func RealizarSocialLogin(c *gin.Context) {
 		return
 	}
 
-  /*data := AuthorizationCodeFlowReq{
-            ClientId:     _GOOGLE_APP_CLIENT_ID,
-            ClientSecret: _GOOGLE_APP_CLIENT_SECRET,
-            Code:          authorization_code,
-            RedirectUri:  _GOOGLE_APP_AUTHORIZATION_URI,
-            GrantType:    _GOOGLE_APP_GRANT_TYPE,
-  }*/
-
 	token, err := exchangeCodeForToken(authorization_code)
-  if err != nil {
-    log.Println("Erro ao obter token:", err)
-    c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha na autenticação"})
-    return
-  }
-	c.JSON(http.StatusOK, gin.H{"token": token})
-
-  /*} else {
+	if err != nil {
+	  log.Println("Erro ao obter token:", err)
+	  c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha na autenticação"})
+	  return
+	} else {
 		// Retorna apenas o access_token para o cliente
 	  url := "https://www.googleapis.com/oauth2/v3/userinfo"
 	  req, err := http.NewRequest("POST", url, nil)
@@ -348,8 +332,9 @@ func RealizarSocialLogin(c *gin.Context) {
 		  c.Abort()
 	    return
 	  }
+
 	  req.Header.Set("Content-Type", "application/json")
-	  req.Header.Set("Authorization", "Bearer" + tokenResponse.AccessToken)
+	  req.Header.Set("Authorization", "Bearer" + token.AccessToken)
 
 	  client := &http.Client{}
 	  resp, err := client.Do(req)
@@ -358,7 +343,7 @@ func RealizarSocialLogin(c *gin.Context) {
 	    c.Abort()
 	    return
 	  }
-		defer resp.Body.Close()
+	  defer resp.Body.Close()
 
 	  // Lê a resposta
 	  body, err := ioutil.ReadAll(resp.Body)
@@ -366,31 +351,27 @@ func RealizarSocialLogin(c *gin.Context) {
 	    c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao ler a resposta"})
 	    c.Abort()
 	  	return
-		}
+	  }
 
-		if err := json.Unmarshal(body, &userInfo); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar o JSON de resposta"})
-			c.Abort()
+	  fmt.Println(string(body))
+
+	  if err := json.Unmarshal(body, &userInfo); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar o JSON de resposta"})
+		c.Abort()
 	    return
 	  }
 
-		token, err := createJWEToken(userInfo.Email)
-		if err != nil {
-			fmt.Print(err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao criar token"})
-			return
-		}
-		setCookieHandler(c.Writer, c.Request, "security_holder", tokenResponse.AccessToken, "localhost")
-		
-		decrypted_token, err := decryptJWEToken(token)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao criar token"})
-			return			
-		}
+	  fmt.Println(userInfo)
 
-		c.JSON(http.StatusOK, gin.H{"access_token": token, "refresh_token": userInfo, "expire_in": tokenResponse.ExpiresIn})
+	  token, err := createJWEToken(userInfo.Email)
+	  if err != nil {
+		fmt.Print(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao criar token"})
 		return
-  }*/
+	   }
+
+	   setCookieHandler(c.Writer, c.Request, "security_holder", token, "localhost")		
+  }
 }
 
 func RealizeLogin(c *gin.Context) {
